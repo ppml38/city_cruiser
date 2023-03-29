@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OBJ parser</title>
+    <script src="./lib/obj.js"></script>
+    <script>
+        function load(){
+            new obj().loadMTLandOBJ(
+                document.getElementById("mtlurl").value, 
+                document.getElementById("objurl").value
+                )
+        }
+    </script>
+</head>
+<body>
+    <input type="text" id="objurl">OBJ file path</input>
+    <input type="text" id="mtlurl">MTL file path</input>
+    <button onclick="load();">Convert</button>
+
+</body>
+</html>

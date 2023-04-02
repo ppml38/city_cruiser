@@ -1,7 +1,6 @@
 body{
     margin: 0rem;
-    background: linear-gradient(skyblue, white);
-    //background-color: black;
+    background-image: url(sky.png);
     font-family: "Segoe UI", Tahoma, Helvetica, Sans-Serif, serif;
     font-style: normal;
     font-size: 14px;
@@ -12,7 +11,5 @@ body{
     left: 0;
     height: 100%;
     width: 100%;
-}
-canvas{
-    border: solid 1px black;
+    overflow: hidden;
 }

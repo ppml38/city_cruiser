@@ -52,12 +52,12 @@ export class entity{
 					}
 				//data.uv = [0, 0];
 				}
-				if(data.uv.length!=data.position.length){
+				/*if(data.uv.length!=data.position.length){
 					let n = (data.position.length - data.uv.length)/3;
 					for(let i=0;i<n;i++){
 						data.uv = data.uv.concat([0,0,0]);
 					}
-				}
+				}*/
 			/*
 				if (!data.normal) {
 				// we probably want to generate normals if there are none

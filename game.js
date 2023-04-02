@@ -9,8 +9,8 @@ export class game{
     constructor(){
         this.canvas = document.createElement("canvas");
         //this.canvas.height=600;
-        this.canvas.height = window.innerHeight-10; //600;
-        this.canvas.width = window.innerWidth-10; //1200;
+        this.canvas.height = window.innerHeight;//-10; //600;
+        this.canvas.width = window.innerWidth;//-10; //1200;
         //this.canvas.width = 600;
         this.cube;
         this.entities=[];

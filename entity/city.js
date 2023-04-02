@@ -3,8 +3,8 @@ import {entity} from './entity.js';
 export class city extends entity{
 	constructor(cwidth,cheight,webgl,eh,cm,inital_translate_values){
         
-        super(cwidth,cheight,"../obj/city/new.json",webgl,eh,cm);
-        this.baseUrl = "../obj/city/";
+        super(cwidth,cheight,"./obj/city/new.json",webgl,eh,cm);
+        this.baseUrl = "./obj/city/";
 
         this.position = [0,0,0];
         this.setInitialLook(

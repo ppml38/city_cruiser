@@ -1,8 +1,8 @@
-import {city} from '../entity/city.js';
-import {car} from '../entity/car.js';
+import {city} from './entity/city.js';
+import {car} from './entity/car.js';
 import {webgl} from './lib/webgl.js';
 import { eventHandler } from './lib/event_handler.js';
-import '../lib/gl-matrix-min.js';
+import './lib/gl-matrix-min.js';
 const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 export class game{
 

@@ -1,4 +1,4 @@
-
+// Program to apply transformational matrices to positions/xyz-coordinates and to get final positions/coordinates.
 
 let positions=[
         -632.2831775604808,

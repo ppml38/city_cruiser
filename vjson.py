@@ -1,3 +1,4 @@
+# Program to correct to values in json, if theres any discrepancy
 import json
 
 filename = "./obj/city/city.json"

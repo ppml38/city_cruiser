@@ -15,7 +15,6 @@ export class webgl{
 	addAttributes(attributes, program){
 		//let uv_length = attributes.uv.length%3===0 ? 3 : 2; //Math.floor(attributes.uv.length/(attributes.position.length/3));
 		Object.entries(attributes).map(([name,data])=>{
-			//console.log(name);
 			let buffer = this.createBuffer(data);
 			this.pointBufferToProgram(program, buffer, name);
 		});
@@ -94,7 +93,6 @@ export class webgl{
 		// Asynchronously load an image
 		const image = new Image();
 		image.onload=()=>{
-			console.log("image loaded");
 			// Now that the image has loaded make copy it to the texture.
 			this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
 			this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -105,7 +103,6 @@ export class webgl{
 				// Yes, it's a power of 2. Generate mips.
 				this.gl.generateMipmap(this.gl.TEXTURE_2D);
 			} else {
-				console.log("is not power");
 				// No, it's not a power of 2. Turn of mips and set wrapping to clamp to edge
 				this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE);
 				this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE);
@@ -140,11 +137,9 @@ export class webgl{
 	}
 
 	draw(attributes,uniforms,texture,no_of_vertices){
-		//console.log(attributes,uniforms,texture,no_of_vertices)
 		this.addAttributes(attributes, this.program);
 		this.addUniforms(uniforms, this.program);
 		if(texture){
-			//console.log(texture);
 			this.gl.activeTexture(this.gl.TEXTURE0);
 			this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
 			this.gl.uniform1i(this.gl.getUniformLocation(this.program, 'textureID'), 0);

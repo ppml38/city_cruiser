@@ -66,7 +66,6 @@ export class entity{
 				}
 				//data.normal = [0, 0, 1];
 				}*/
-				console.log(data);
 			});
 			this.state="ready";
 		});

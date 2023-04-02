@@ -4,7 +4,6 @@ const { mat2, mat2d, mat3, mat4, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
 export class car extends entity{
 	constructor(cwidth,cheight,webgl,eh,cm){
-        console.log("initing car");
         super(cwidth,cheight,"../obj/car/car.json",webgl,eh,cm);
         this.baseUrl = "../obj/car/";
 

@@ -17,8 +17,8 @@ export class car extends entity{
 
 
         //Variable to check for steering threshold breach, to check if we can start moving the camera.
-        this.steeringMinimumThreshold = 24;
-        this.stepThresholdLevel = 6;
+        this.steeringMinimumThreshold = 5;
+        this.stepThresholdLevel = 1;
         this.currentThresholdLevel = 0;
 
         // stats to position camera accordingly during a turn.
@@ -40,20 +40,26 @@ export class car extends entity{
         //this.scale(.5,.5,.5);
     }
 
-    isTurnThresholdBreached(){
+    isTurnThresholdBreached(timeFactor){
         // Threshold to decide if we should move camera or not, while the car started turning.
         // until this threshold breached, turn will be instant, once breached, camera will start showing the car movement.
         if(this.currentThresholdLevel<this.steeringMinimumThreshold){
-            this.currentThresholdLevel+=this.stepThresholdLevel;
+            this.currentThresholdLevel+=(this.stepThresholdLevel*timeFactor);
             return false;
         }
         return true;
     }
 
-    handleUserInputs(){
+    handleUserInputs(timeFactor){
         // Must be in the order Translate, rotate xyz, scale
         let can_turn = false;
         let reverse = 1;
+		
+		//console.log(timeFactor);
+		this.speed=timeFactor*40;
+		this.steering_speed = timeFactor*5;
+		//console.log(`speed: ${this.speed}`);
+		
         if(this.event_handler.up_key_pressed===true){
             this.translate(0,0,-.25 * this.speed);
             this.moveCamera(0,0,-.25 * this.speed);
@@ -75,7 +81,7 @@ export class car extends entity{
              * We need to rotate the cube and also place the camera behind the cube
              * in correct offset.
              */
-             if(this.isTurnThresholdBreached() && (this.steering==='' || this.steering==='left')){
+             if(this.isTurnThresholdBreached(timeFactor) && (this.steering==='' || this.steering==='left')){
                      this.steering = 'left';
                      this.current_steering_angle = Math.max(-this.maximum_steering_angle, this.current_steering_angle-this.step_steering_angle);
             }
@@ -95,7 +101,7 @@ export class car extends entity{
             this.rotateCamera(-.5 * speed);
             this.rotateY(-0.5 * speed);
             */
-            if(this.isTurnThresholdBreached() && (this.steering==='' || this.steering==='right')){
+            if(this.isTurnThresholdBreached(timeFactor) && (this.steering==='' || this.steering==='right')){
                  this.steering = 'right';
                  this.current_steering_angle = Math.min(this.maximum_steering_angle, this.current_steering_angle+this.step_steering_angle);
             }

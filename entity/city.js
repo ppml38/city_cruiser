@@ -23,7 +23,7 @@ export class city extends entity{
         
     }
 
-    _handleUserInputs(){
+    _handleUserInputs(timeFactor){
         // Must be in the order Translate, rotate xyz, scale
         let speed = 5;
         if(this.event_handler.up_key_pressed===true){

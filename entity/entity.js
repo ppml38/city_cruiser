@@ -99,7 +99,7 @@ export class entity{
 		mat4.rotateZ(this.modelMatrix, this.modelMatrix, Math.PI/180 * degree);
 	}
 
-	handleUserInputs(){
+	handleUserInputs(timeFactor){
 		// to be filled in by child classes
 
 		// Must be in the order Translate, rotate xyz, scale
@@ -110,12 +110,20 @@ export class entity{
 		mat4.multiply(this.vpMatrix, this.projectionMatrix, this.viewMatrix);
 		mat4.multiply(this.mvpMatrix, this.vpMatrix, this.modelMatrix);
 	}
-	render(game){
+	render(game, now){
 		if(this.state!=='ready'){
 			console.log("not ready");
 			return;
 		};
-		this.handleUserInputs();
+		if(!this.then) this.then = now;
+		this.timeDelta = (now-this.then);// * 0.001; // from microseconds to milliseconds
+		if(this.timeDelta<25){
+			//console.log(`returning ${this.timeDelta}`);
+			return; // 30 frames per second
+		}
+		this.then = now;
+		
+		this.handleUserInputs(this.timeDelta*0.04);// multiply with 1/25
 		this.prepareMatrices();
 		this.materials.map((material)=>{
 			let data = material.data;
@@ -129,6 +137,7 @@ export class entity{
 				{
 					'matrix':this.mvpMatrix,
 					//'normalMatrix':this.normalMatrix,
+					//'diffuse':data.diffuse,
 				}, 
 				this.textures[data.texture],
 				data.position.length/3

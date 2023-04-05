@@ -1,7 +1,7 @@
 precision mediump float;
 
 varying vec2 vUV;
-//varying float vBrightness;
+//varying vec3 vBrightness;
 
 uniform sampler2D textureID;
 

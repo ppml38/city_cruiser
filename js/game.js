@@ -49,17 +49,17 @@ export class game{
             });
         });
     }
-    run(){
+    run(time){
         
         if(this.webgl){
             this.entities.map((entity)=>{
-                entity.render(this);
+                entity.render(this, time);
             });
         }
         else{
             console.log("webgl not ready");
         }
-        requestAnimationFrame(()=>{this.run();});
+        requestAnimationFrame((t)=>{this.run(t);});
         
     }
     render(){

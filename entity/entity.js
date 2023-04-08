@@ -80,6 +80,10 @@ export class entity{
 	moveCamera(x,y,z){
 		mat4.translate(this.cameraMatrix, this.cameraMatrix, [x,y,z]);
 	}
+	rotateCameraY(degree){
+		mat4.rotateY(this.cameraMatrix, this.cameraMatrix, Math.PI/180 * degree);
+	}
+	
 	degToRadian(d){
 		return Math.PI/180 * d;
 	}

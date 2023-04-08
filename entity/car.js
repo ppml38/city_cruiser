@@ -8,12 +8,12 @@ export class car extends entity{
         this.baseUrl = "./obj/car/";
 
         // Position of camera based on cube
-        this.cameraOffsetY = 0;
-        this.cameraOffsetZ = 125;
+        this.cameraOffsetY = -40;
+        this.cameraOffsetZ = 100;
 
         // Speed at which the cube travels
-        this.speed = 40;
-        this.steering_speed=5;
+        this.speed = 40; // no use. check function after timefactor
+        this.steering_speed=5; // same as step_steering_angle below. for smoother camera.
 
 
         //Variable to check for steering threshold breach, to check if we can start moving the camera.
@@ -22,7 +22,7 @@ export class car extends entity{
         this.currentThresholdLevel = 0;
 
         // stats to position camera accordingly during a turn.
-        this.maximum_steering_angle = 50; //MUST be the multiple of step below else will cause shake
+		this.maximum_steering_angle = 40; //MUST be the multiple of step below else will cause shake
         this.step_steering_angle = 5;
         this.current_steering_angle = 0;
         this.steering = '';
@@ -35,30 +35,43 @@ export class car extends entity{
         // This sets initial model matrix
         //this.translate(675,0,600);
         //this.rotateY(-90);
-        //this.moveCamera(-20,-1+1,-4+3)
-		this.translate(0,-this.cameraOffsetY,-this.cameraOffsetZ);
+		this.translate(0,0,-this.cameraOffsetZ);
+		this.moveCamera(0,this.cameraOffsetY,0);
         //this.scale(.5,.5,.5);
     }
-
-    isTurnThresholdBreached(timeFactor){
-        // Threshold to decide if we should move camera or not, while the car started turning.
-        // until this threshold breached, turn will be instant, once breached, camera will start showing the car movement.
-        if(this.currentThresholdLevel<this.steeringMinimumThreshold){
-            this.currentThresholdLevel+=(this.stepThresholdLevel*timeFactor);
-            return false;
-        }
-        return true;
-    }
-
+	
+	rotateInPlace(degree){
+		this.translate(0,-this.cameraOffsetY,-this.cameraOffsetZ);
+		this.rotateY(degree);
+		
+		if(!this.inverseTranslate){
+			this.inverseTranslate = mat4.create();
+			mat4.translate(this.inverseTranslate, this.inverseTranslate, [0,-this.cameraOffsetY,-this.cameraOffsetZ]);
+			mat4.invert(this.inverseTranslate,this.inverseTranslate);
+		}
+		mat4.multiply(this.modelMatrix, this.modelMatrix, this.inverseTranslate );
+	}
+	keepCameraBehindCarWhileTurning(degree){
+		mat4.multiply(this.cameraMatrix, this.modelMatrix, mat4.identity(this.cameraMatrix));
+		this.moveCamera(0,-this.cameraOffsetY,-this.cameraOffsetZ);
+		this.rotateCameraY(degree);
+		
+		if(!this.inverseTranslate){
+			this.inverseTranslate = mat4.create();
+			mat4.translate(this.inverseTranslate, this.inverseTranslate, [0,-this.cameraOffsetY,-this.cameraOffsetZ]);
+			mat4.invert(this.inverseTranslate,this.inverseTranslate);
+		}
+		mat4.multiply(this.cameraMatrix, this.cameraMatrix, this.inverseTranslate );
+		this.moveCamera(0,this.cameraOffsetY, this.cameraOffsetZ);
+	}
     handleUserInputs(timeFactor){
         // Must be in the order Translate, rotate xyz, scale
         let can_turn = false;
         let reverse = 1;
 		
-		//console.log(timeFactor);
+		// Below adds some decimal point shake to the camera, which is noticable on slow computers during turn, so commenting this out.
 		this.speed=timeFactor*40;
 		this.steering_speed = timeFactor*5;
-		//console.log(`speed: ${this.speed}`);
 		
         if(this.event_handler.up_key_pressed===true){
             this.translate(0,0,-.25 * this.speed);
@@ -81,16 +94,18 @@ export class car extends entity{
              * We need to rotate the cube and also place the camera behind the cube
              * in correct offset.
              */
-             if(this.isTurnThresholdBreached(timeFactor) && (this.steering==='' || this.steering==='left')){
+             if((this.steering==='' || this.steering==='left')){
                      this.steering = 'left';
                      this.current_steering_angle = Math.max(-this.maximum_steering_angle, this.current_steering_angle-this.step_steering_angle);
             }
-            // Rotate the cube
-            this.rotateY(0.5 * this.steering_speed * reverse);
-            // Set camera matrix same as cube model matrix
-            mat4.multiply(this.cameraMatrix, this.modelMatrix, mat4.identity(this.cameraMatrix));
+			// Rotate the cube
+            this.rotateInPlace(0.5 * this.steering_speed * reverse);
+			// Set camera matrix same as cube model matrix
+            //mat4.multiply(this.cameraMatrix, this.modelMatrix, mat4.identity(this.cameraMatrix));
             // move camera back to offset, so that its behind the cube.
-            this.moveCamera(this.current_steering_angle,this.cameraOffsetY, this.cameraOffsetZ);
+            //this.rotateCameraY(0.5 * this.current_steering_angle);
+			this.keepCameraBehindCarWhileTurning(0.5 * this.current_steering_angle);
+			
             
         }
         if(this.event_handler.right_key_pressed===true){
@@ -101,27 +116,33 @@ export class car extends entity{
             this.rotateCamera(-.5 * speed);
             this.rotateY(-0.5 * speed);
             */
-            if(this.isTurnThresholdBreached(timeFactor) && (this.steering==='' || this.steering==='right')){
+            if((this.steering==='' || this.steering==='right')){
                  this.steering = 'right';
                  this.current_steering_angle = Math.min(this.maximum_steering_angle, this.current_steering_angle+this.step_steering_angle);
             }
            //this.rotateCamera(1);
-            this.rotateY(-0.5 * this.steering_speed * reverse);
-            mat4.multiply(this.cameraMatrix, this.modelMatrix, mat4.identity(this.cameraMatrix));
-            this.moveCamera(this.current_steering_angle,this.cameraOffsetY, this.cameraOffsetZ);
+			this.rotateInPlace(-0.5 * this.steering_speed * reverse);
+            this.keepCameraBehindCarWhileTurning(0.5 * this.current_steering_angle);
+            //this.rotateCameraY(0.5 * this.current_steering_angle);
+			
+			
 
         }
         if(this.event_handler.left_key_pressed!==true && this.event_handler.right_key_pressed!==true && this.current_steering_angle!==0){
             this.steering = '';
             this.currentThresholdLevel = 0;
-            if(this.current_steering_angle<0){
+			if(Math.abs(this.current_steering_angle)<=this.step_steering_angle){
+				this.current_steering_angle = 0;
+			}
+            else if(this.current_steering_angle<0){
                 this.current_steering_angle += this.step_steering_angle;
             }
             else{
                 this.current_steering_angle -= this.step_steering_angle;
             }
             mat4.multiply(this.cameraMatrix, this.modelMatrix, mat4.identity(this.cameraMatrix));
-            this.moveCamera(this.current_steering_angle,this.cameraOffsetY, this.cameraOffsetZ);
+			this.keepCameraBehindCarWhileTurning( 0.5 * this.current_steering_angle);
+            //this.moveCamera(0,this.cameraOffsetY, this.cameraOffsetZ);
         }
 		if(this.event_handler.left_key_pressed!==true && this.event_handler.right_key_pressed!==true){
 			this.currentThresholdLevel = 0;
